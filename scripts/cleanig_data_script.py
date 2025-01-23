@@ -74,6 +74,28 @@ def drop_column(input_file, output_file, important_features):
     print(f"Sauvegarde des données réduites dans {output_file}...")
     reduced_data.to_csv(output_file, index=False)
 
+def normalize_humidity(input_file, output_file):
+    """
+    Normalise la colonne 'humidite' en divisant les valeurs par 100 pour les ramener à une échelle de 0 à 1.
+
+    Parameters:
+        input_file (str): Chemin du fichier d'entrée.
+        output_file (str): Chemin du fichier de sortie.
+    """
+    print(f"Chargement des données depuis {input_file}...")
+    data = pd.read_csv(input_file)
+
+    if 'humidite' in data.columns:
+        print("Normalisation de la colonne 'humidite' (division par 100)...")
+        data['humidite'] = data['humidite'] / 100
+    else:
+        print("La colonne 'humidite' est introuvable dans les données.")
+        return
+
+    print(f"Sauvegarde des données normalisées dans {output_file}...")
+    data.to_csv(output_file, index=False)
+    print("Normalisation terminée avec succès.")
+
 def normalize_data(input_file, output_file, Class='catastrophe'):
     """
     Normalise les données numériques d'un fichier CSV (exclut les colonnes non numériques).
