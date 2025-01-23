@@ -1,52 +1,17 @@
+from operator import index
+
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 
-def reduce_transaction(input_file, output_file, pourcentage_reduction=0.01):
-    """
-    Réduit les transactions non frauduleuses selon un pourcentage donné tout en conservant toutes les fraudes.
+def column_mapping(input_file, output_file, mapping, column_name):
+    input_data = pd.read_csv(input_file)
 
-    Parameters:
-        input_file (str): Chemin vers le fichier CSV contenant les données d'origine.
-        output_file (str): Chemin pour sauvegarder les données réduites.
-        pourcentage_reduction (float): Pourcentage des transactions non frauduleuses à conserver (entre 0 et 1).
+    input_data[column_name] = input_data[column_name].map(mapping)
 
-    Returns:
-        None
-    """
-    # Charger le fichier CSV
-    data = pd.read_csv(input_file)
-
-    # Séparer les transactions frauduleuses et non frauduleuses
-    fraud_data = data[data['Class'] == 1]
-    non_fraud_data = data[data['Class'] == 0]
-
-    # Calculer la variance pour chaque colonne (hors 'Class') pour les non frauduleuses
-    variances = non_fraud_data.drop(columns=['Class']).var()
-
-    # Créer une mesure de variance combinée pour chaque ligne
-    variance_weights = non_fraud_data.drop(columns=['Class']).apply(lambda row: np.dot(row, variances), axis=1)
-
-    # Ajouter cette mesure dans le dataset
-    non_fraud_data = non_fraud_data.copy()
-    non_fraud_data['VarianceScore'] = variance_weights
-
-    # Trier les non frauduleuses par ordre décroissant de la mesure de variance
-    non_fraud_sorted = non_fraud_data.sort_values(by='VarianceScore', ascending=False)
-
-    # Conserver le pourcentage des lignes les plus variées pour les non frauduleuses
-    reduced_non_fraud = non_fraud_sorted.head(int(len(non_fraud_data) * pourcentage_reduction))
-
-    # Supprimer la colonne 'VarianceScore'
-    reduced_non_fraud = reduced_non_fraud.drop(columns=['VarianceScore'])
-
-    # Combiner les données réduites avec toutes les transactions frauduleuses
-    reduced_data = pd.concat([reduced_non_fraud, fraud_data])
-
-    # Sauvegarder le nouveau dataset
-    reduced_data.to_csv(output_file, index=False)
+    input_data.to_csv(output_file, index=False)
 
 # Fonction pour normaliser les données
 def normalize_data(input_file, output_file):

@@ -12,35 +12,26 @@ def display_message(message):
 
 # Définir les chemins des fichiers
 credit_card_data_file = 'data/creditcard.csv'
-reduced_data_file = 'data/reduced_creditcard.csv'
-correlation_matrix_file = 'data/correlation_matrix_creditcard.csv'
-output_image_V1_V2 = 'docs/V1_V2.png'
-output_image_corr_before = 'docs/correlation_matrix_before.png'
-output_image_corr_after = 'docs/correlation_matrix_after.png'
-output_scaled_file = 'data/scaled_creditcard.csv'
-output_stats_file = 'data/stats_summary.csv'
-ml_model_file = 'models/ml_model.joblib'
-dl_model_file = 'models/deep_model.keras'
-isolated_row_file = 'data/isolated_row.csv'
-output_roc_curve = 'docs/roc_curve.png'
-reformed_data_file = 'data/reformed_creditcard.csv'
-output_learning_curve = 'docs/learning_curve.png'
-dl_learning_curve = 'docs/deep_learning_curve.png'
-output_loss_curve = 'docs/loss_curve.png'
+
+# Definir le changement dans les colonnes
+mapping_cata = {
+        "aucun": 0,
+        "['seisme']": 1,
+        "['innondation']": 2,
+        "['innondation'],['seisme']": 3
+    }
+mapping_zone = {
+    "Zone 1": 1,
+    "Zone 2": 3,
+    "Zone 4": 2,
+    "Zone 3": 4,
+}
 
 # Options pour le choix de l'utilisateur
 def main():
     display_message("Bienvenue dans le programme de traitement des données et d'entraînement de modèle")
     options = {
         "1": "Réduire les données",
-        "2": "Visualiser les données (V1 vs V2)",
-        "3": "Générer la matrice de corrélation",
-        "4": "Normaliser les données",
-        "5": "Calculer les statistiques",
-        "6": "Séparer une ligne du dataset",
-        "7": "Entraîner un modèle Machine Learning",
-        "8": "Entraîner un modèle Deep Learning",
-        "9": "Effectuer une prédiction",
     }
 
     for key, value in options.items():
