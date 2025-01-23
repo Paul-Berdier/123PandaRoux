@@ -2,8 +2,31 @@ from operator import index
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import csv
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
+
+def debug_ligne(input_file, output_file):
+    # Lire le fichier et enlever les guillemets au début et à la fin des lignes
+    with open(input_file, 'r', encoding='utf-8') as f:
+        raw_data = f.readlines()
+
+    # Traiter chaque ligne pour supprimer les guillemets et remplacer les virgules par des points-virgules
+    processed_data = []
+    for line in raw_data:
+        # Si la ligne contient une liste (identifiée par des crochets)
+        if '[' in line and ']' in line:
+            # Remplacer la virgule entre les éléments de la liste par un point-virgule
+            line = line.replace(', ', '; ')
+        # Enlever tous les guillemets (simples et doubles) pour éviter tout problème de format
+        line = line.replace('"', '').replace("'", '')  # Enlever les guillemets
+        processed_data.append(line)
+
+    # Sauvegarder les données traitées dans un nouveau fichier sans guillemets et avec ; au lieu de virgules
+    with open(output_file, 'w', encoding='utf-8', newline='') as f:
+        f.writelines(processed_data)
+
+    print(f"Les données traitées ont été sauvegardées dans : {output_file}")
 
 def column_mapping(input_file, output_file, mapping, column_name):
     input_data = pd.read_csv(input_file)
@@ -40,13 +63,13 @@ def compute_statistics(input_file, output_file):
     stats['IQR'] = stats['75%'] - stats['25%']
     stats.to_csv(output_file)
 
-def correlation_matrix(input_file, output_file, threshold=0.1):
+def correlation_matrix(input_file, output_file, clas='catastrophe', threshold=0.1):
     # Recharger le fichier dataset réduit
     data = pd.read_csv(input_file)
 
     # Calculer la matrice de corrélation avec la variable cible 'Class'
     correlation_matrix = data.corr()
-    correlations_with_class = correlation_matrix['Class'].sort_values(ascending=False)
+    correlations_with_class = correlation_matrix[clas].sort_values(ascending=False)
 
     # Identifier les variables avec une corrélation absolue > 0.1 (seuil)
     important_features = correlations_with_class[abs(correlations_with_class) > threshold].index.tolist()
