@@ -1,4 +1,6 @@
 import os
+from random import random
+
 import pandas as pd
 from scripts.cleanig_data_script import debug_ligne, column_mapping, normalize_data, compute_statistics, \
     correlation_matrix, isolate_random_row, drop_column, normalize_humidity
@@ -21,6 +23,8 @@ def display_message(message):
 catastrophes_naturelles_data = 'data/catastrophes_naturelles.csv'
 clean_catastrophes_naturelles_data = 'data/clean_catastrophes_naturelles.csv'
 statistics_data = 'data/statistics_data.csv'
+random_row = 'data/random_row.csv'
+reformed_catastrophes_naturelles_data = 'data/reformed_catastrophes_naturelles_data.csv'
 
 # Définir le mapping des colonnes
 mapping_cata = {
@@ -54,6 +58,7 @@ def main():
     display_message("Bienvenue dans le programme de traitement des données et d'entraînement de modèle")
     options = {
         "1": "Réduire les données",
+        '2': 'Séparer une ligne du dataset'
     }
 
     # Afficher les options disponibles
@@ -70,14 +75,20 @@ def main():
 
     # Étape 1 : Réduction des données
     if 1 in choice:
-        print("\nÉtape 1 : Nettoyage et réduction des données...")
+        display_message("\nÉtape 1 : Nettoyage et réduction des données...")
         debug_ligne(catastrophes_naturelles_data, clean_catastrophes_naturelles_data)
         column_mapping(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, mapping_cata, "catastrophe")
         column_mapping(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, mapping_zone, "quartier")
         drop_column(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, important_features)
         normalize_humidity(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data)
         compute_statistics(clean_catastrophes_naturelles_data, statistics_data)
-        print("Réduction et nettoyage des données terminés avec succès !")
+        display_message("Réduction et nettoyage des données terminés avec succès !")
+
+    # Étape 2 : Separation d'une ligne
+    if 2 in choice:
+        display_message("\nÉtape 2 : Separation d'une ligne aléatoire")
+        isolate_random_row(clean_catastrophes_naturelles_data, reformed_catastrophes_naturelles_data, random_row)
+        display_message("Séparation d'une ligne aléatoire terminés avec succès")
 
 if __name__ == '__main__':
     main()
