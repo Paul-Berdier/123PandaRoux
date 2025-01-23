@@ -13,6 +13,19 @@ def display_message(message):
 # Définir les chemins des fichiers
 credit_card_data_file = 'data/creditcard.csv'
 
+# Definir le changement dans les colonnes
+mapping_cata = {
+        "aucun": 0,
+        "['seisme']": 1,
+        "['innondation']": 2,
+        "['innondation'],['seisme']": 3
+    }
+mapping_zone = {
+    "Zone 1": 1,
+    "Zone 2": 3,
+    "Zone 4": 2,
+    "Zone 3": 4,
+}
 
 # Options pour le choix de l'utilisateur
 def main():
