@@ -8,8 +8,8 @@ IOT team give every day a CSV with all data collected during the day
     -> We have to aggregate those CSV and then get the average of the day
 
 
-Mapping for "catastrophe" :
-        0     aucun
-        1     seisme 
-        2     innondation
-        3     both
+Mapping for "catastrophe" : \n
+        0 - aucun \n
+        1 - seisme \n
+        2 - innondation \n
+        3 - both \n
