@@ -1,9 +1,13 @@
 import os
+from random import random
+
 import pandas as pd
+
+from scripts.ML_model_training_script import train_ml_model
 from scripts.cleanig_data_script import debug_ligne, column_mapping, normalize_data, compute_statistics, \
     correlation_matrix, isolate_random_row, drop_column, normalize_humidity
-# from scripts.visualisation_script import visualisation_V1_V2, visualisation_correlation_matrix
-# from scripts.ML_model_training_script import train_ml_model
+from scripts.visualisation_script import visualisation_V1_V2, visualisation_correlation_matrix
+from scripts.ML_model_training_script import train_ml_model
 # from scripts.DL_model_training_script import train_deep_learning_model  # Nouvelle fonction pour le DL
 # from scripts.prediction_script import perform_prediction  # Nouvelle fonction pour la prédiction
 from colorama import Fore, Style
@@ -21,6 +25,11 @@ def display_message(message):
 catastrophes_naturelles_data = 'data/catastrophes_naturelles.csv'
 clean_catastrophes_naturelles_data = 'data/clean_catastrophes_naturelles.csv'
 statistics_data = 'data/statistics_data.csv'
+random_row = 'data/random_row.csv'
+reformed_catastrophes_naturelles_data = 'data/reformed_catastrophes_naturelles_data.csv'
+output_roc_curve = 'docs/output_roc_curve.png'
+output_learning_curve = 'docs/learning_curve.png'
+ml_model_file = 'models/ml_model2.joblib'
 
 # Définir le mapping des colonnes
 mapping_cata = {
@@ -54,6 +63,8 @@ def main():
     display_message("Bienvenue dans le programme de traitement des données et d'entraînement de modèle")
     options = {
         "1": "Réduire les données",
+        '2': 'Séparer une ligne du dataset',
+        '3': "Entrainement d'un modèle ML"
     }
 
     # Afficher les options disponibles
@@ -70,14 +81,26 @@ def main():
 
     # Étape 1 : Réduction des données
     if 1 in choice:
-        print("\nÉtape 1 : Nettoyage et réduction des données...")
+        display_message("\nÉtape 1 : Nettoyage et réduction des données...")
         debug_ligne(catastrophes_naturelles_data, clean_catastrophes_naturelles_data)
         column_mapping(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, mapping_cata, "catastrophe")
         column_mapping(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, mapping_zone, "quartier")
         drop_column(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, important_features)
         normalize_humidity(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data)
         compute_statistics(clean_catastrophes_naturelles_data, statistics_data)
-        print("Réduction et nettoyage des données terminés avec succès !")
+        display_message("Réduction et nettoyage des données terminés avec succès !")
+
+    # Étape 2 : Separation d'une ligne
+    if 2 in choice:
+        display_message("\nÉtape 2 : Separation d'une ligne aléatoire")
+        isolate_random_row(clean_catastrophes_naturelles_data, reformed_catastrophes_naturelles_data, random_row)
+        display_message(f"Ligne isolée sauvegardée sous : {random_row}")
+
+    # Étape 3 : Entrainement d'un modèle ML
+    if 3 in choice:
+        display_message("\nÉtape 3 : Entrainement d'un modèle ML")
+        train_ml_model(reformed_catastrophes_naturelles_data, output_roc_curve, output_learning_curve, output_model_file=ml_model_file)
+        display_message(f"Modèle DL sauvegardé sous : {ml_model_file}")
 
 if __name__ == '__main__':
     main()
