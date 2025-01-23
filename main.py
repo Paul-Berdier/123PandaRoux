@@ -18,7 +18,7 @@ mapping_cata = {
         "aucun": 0,
         "['seisme']": 1,
         "['innondation']": 2,
-        "['innondation'],['seisme']": 3
+        "['innondation','seisme']": 3
     }
 mapping_zone = {
     "Zone 1": 1,
