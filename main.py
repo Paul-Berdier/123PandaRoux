@@ -1,30 +1,32 @@
 import os
 import pandas as pd
-from scripts.cleanig_data_script import reduce_transaction, normalize_data, compute_statistics, correlation_matrix, isolate_random_row
-from scripts.visualisation_script import visualisation_V1_V2, visualisation_correlation_matrix
-from scripts.ML_model_training_script import train_ml_model
-from scripts.DL_model_training_script import train_deep_learning_model  # Nouvelle fonction pour le DL
-from scripts.prediction_script import perform_prediction  # Nouvelle fonction pour la prédiction
+from scripts.cleanig_data_script import debug_ligne,column_mapping, normalize_data, compute_statistics, correlation_matrix, isolate_random_row
+# from scripts.visualisation_script import visualisation_V1_V2, visualisation_correlation_matrix
+# from scripts.ML_model_training_script import train_ml_model
+# from scripts.DL_model_training_script import train_deep_learning_model  # Nouvelle fonction pour le DL
+# from scripts.prediction_script import perform_prediction  # Nouvelle fonction pour la prédiction
 from colorama import Fore, Style
 
 def display_message(message):
     print(Fore.GREEN + message.upper() + Style.RESET_ALL)
 
 # Définir les chemins des fichiers
-credit_card_data_file = 'data/creditcard.csv'
+catastrophes_naturelles_data = 'data/catastrophes_naturelles.csv'
+clean_catastrophes_naturelles_data = 'data/clean_catastrophes_naturelles.csv'
 
 # Definir le changement dans les colonnes
 mapping_cata = {
         "aucun": 0,
-        "['seisme']": 1,
-        "['innondation']": 2,
-        "['innondation'],['seisme']": 3
+        "[seisme]": 1,
+        "[innondation]": 2,
+        "[innondation; seisme]": 3
     }
 mapping_zone = {
     "Zone 1": 1,
     "Zone 2": 3,
     "Zone 4": 2,
     "Zone 3": 4,
+    "Zone 5": 5
 }
 
 # Options pour le choix de l'utilisateur
@@ -45,64 +47,10 @@ def main():
         choice = list(map(int, choice.split(',')))
 
     if 1 in choice:
-        pourcentage_reduction = input(
-            "\nA combien de pourcents voulez-vous réduire les ligne non frauduleuse du dataset ? (entre 0 et 1 avec 0.01 de base) : ")
-        try:
-            pourcentage_reduction = float(pourcentage_reduction)  # Convertir en flottant
-            if not (0 < pourcentage_reduction <= 1):
-                raise ValueError("Le pourcentage doit être un nombre entre 0 et 1.")
-        except ValueError as e:
-            print(Fore.RED + "Erreur : " + str(e) + Style.RESET_ALL)
-            return  # Terminer le programme si l'entrée est invalide
+        debug_ligne(catastrophes_naturelles_data, clean_catastrophes_naturelles_data)
+        column_mapping(clean_catastrophes_naturelles_data,clean_catastrophes_naturelles_data,mapping_cata, "catastrophe")
+        column_mapping(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, mapping_zone,"quartier")
 
-        display_message("Réduction des transactions en cours...")
-        reduce_transaction(credit_card_data_file, reduced_data_file, pourcentage_reduction)
-        display_message("Réduction des transactions terminée.")
-
-    if 2 in choice:
-        display_message("Génération du graphique de dispersion (V1 vs V2)...")
-        reduced_data = pd.read_csv(reduced_data_file)
-        visualisation_V1_V2(reduced_data, output_image_V1_V2)
-        display_message(f"Graphique enregistré sous : {output_image_V1_V2}")
-
-    if 3 in choice:
-        display_message("Génération de la matrice de corrélation...")
-        reduced_data = pd.read_csv(reduced_data_file)
-        visualisation_correlation_matrix(reduced_data, output_image_corr_before)
-        display_message(f"Matrice de corrélation enregistrée sous : {output_image_corr_before}")
-        correlation_matrix(reduced_data_file, correlation_matrix_file)
-        display_message(f"Matrice de corrélation sauvegardée sous : {correlation_matrix_file}")
-        visualisation_correlation_matrix(pd.read_csv(correlation_matrix_file), output_image_corr_after)
-        display_message(f"Matrice de corrélation enregistrée sous : {output_image_corr_after}")
-
-    if 4 in choice:
-        display_message("Normalisation des données en cours...")
-        normalize_data(correlation_matrix_file, output_scaled_file)
-        display_message(f"Données normalisées et sauvegardées sous : {output_scaled_file}")
-
-    if 5 in choice:
-        display_message("Calcul des statistiques essentielles...")
-        compute_statistics(output_scaled_file, output_stats_file)
-        display_message(f"Statistiques essentielles sauvegardées sous : {output_stats_file}")
-
-    if 6 in choice:
-        display_message("Isolation d'une ligne aléatoire pour la prédiction finale...")
-        isolate_random_row(output_scaled_file, reformed_data_file, isolated_row_file)
-        display_message(f"Ligne isolée sauvegardée sous : {isolated_row_file}")
-
-    if 7 in choice:
-        display_message("Entraînement du modèle de Machine Learning...")
-        train_ml_model(reformed_data_file, output_roc_curve, output_learning_curve, target_column='Class', output_model_file=ml_model_file)
-        display_message(f"Modèle ML sauvegardé sous : {ml_model_file}")
-
-    if 8 in choice:
-        display_message("Entraînement du modèle Deep Learning...")
-        train_deep_learning_model(reformed_data_file, output_loss_curve, target_column='Class', output_model_file=dl_model_file, output_learning_curve=dl_learning_curve)
-        display_message(f"Modèle DL sauvegardé sous : {dl_model_file}")
-
-    if 9 in choice:
-        display_message("Effectuer une prédiction avec les modèles ML et DL...")
-        perform_prediction(isolated_row_file, ml_model_file, dl_model_file)
 
 if __name__ == '__main__':
     main()
