@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from scripts.cleanig_data_script import debug_ligne, column_mapping, normalize_data, compute_statistics, \
-    correlation_matrix, isolate_random_row, drop_column
+    correlation_matrix, isolate_random_row, drop_column, normalize_humidity
 # from scripts.visualisation_script import visualisation_V1_V2, visualisation_correlation_matrix
 # from scripts.ML_model_training_script import train_ml_model
 # from scripts.DL_model_training_script import train_deep_learning_model  # Nouvelle fonction pour le DL
@@ -75,7 +75,7 @@ def main():
         column_mapping(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, mapping_cata, "catastrophe")
         column_mapping(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, mapping_zone, "quartier")
         drop_column(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data, important_features)
-        normalize_data(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data)
+        normalize_humidity(clean_catastrophes_naturelles_data, clean_catastrophes_naturelles_data)
         compute_statistics(clean_catastrophes_naturelles_data, statistics_data)
         print("Réduction et nettoyage des données terminés avec succès !")
 
