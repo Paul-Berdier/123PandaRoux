@@ -12,3 +12,6 @@ Mapping for "catastrophe" :
         0 - aucun | 1 - seisme | 2 - innondation | 3 - both
 
 Power BI : To change the csv data first go in the Power Query (Transformer les données) and edit the data source (Parametre de la source de donnees)
+
+script_hackathon : This scripts clean the data and do the machine learning for the prediction
+
