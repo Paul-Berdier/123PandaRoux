@@ -96,6 +96,7 @@ Le projet est structuré en plusieurs dossiers pour faciliter l'organisation et 
    - Le projet générera les autres fichiers et visualisations dans leurs dossiers respectifs.
 
 ## Exécution du projet
+   La fonction main permettant l'execution de tout les scryptes ne fonctionne pas proprement avec le modele final. De se fait le jupyter 'script_hackaton' contient tout le fonctionnement du programme main avec le modele final.
 
 1. **Cloner le projet :**
    ```bash
