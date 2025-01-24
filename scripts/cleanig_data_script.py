@@ -148,7 +148,7 @@ def compute_statistics(input_file, output_file):
 
     print("Statistiques descriptives calculées et sauvegardées avec succès.")
 
-def correlation_matrix(input_file, output_file, Class='catastrophe', threshold=0.1):
+def correlation_matrix(input_file, output_file, Class='catastrophe', threshold=0.05):
     """
     Calcule la matrice de corrélation et identifie les colonnes pertinentes.
 
@@ -161,18 +161,36 @@ def correlation_matrix(input_file, output_file, Class='catastrophe', threshold=0
     print(f"Chargement des données depuis {input_file}...")
     data = pd.read_csv(input_file)
 
+    # Sauvegarder la colonne 'date' pour la réintégrer plus tard
+    if 'date' in data.columns:
+        date_column = data[['date']]
+    else:
+        date_column = None
+
+    # Filtrer uniquement les colonnes numériques
+    data_numeric = data.select_dtypes(include=[np.number])
+
+    # Vérification des colonnes utilisées
+    print(f"Colonnes numériques utilisées pour la corrélation : {data_numeric.columns}")
+
     print(f"Calcul de la matrice de corrélation avec '{Class}'...")
-    correlation_matrix = data.corr()
+    correlation_matrix = data_numeric.corr()
     correlations_with_class = correlation_matrix[Class].sort_values(ascending=False)
 
     print("Sélection des colonnes ayant une corrélation significative...")
     important_features = correlations_with_class[abs(correlations_with_class) > threshold].index.tolist()
+
+    # Conserver uniquement les colonnes importantes
     reduced_data = data[important_features]
+
+    # Réintégrer la colonne 'date' si elle existe
+    if date_column is not None:
+        reduced_data = pd.concat([date_column, reduced_data], axis=1)
 
     print(f"Sauvegarde des données réduites dans {output_file}...")
     reduced_data.to_csv(output_file, index=False)
 
-    print(f"Colonnes importantes identifiées : {important_features}")
+    print(f"Colonnes importantes identifiées (avec 'date') : {reduced_data.columns.tolist()}")
 
 
 def isolate_random_row(data_file, output_data_file, isolated_row_file, target_column='Class'):
