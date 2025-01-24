@@ -6,9 +6,8 @@ import pandas as pd
 from scripts.ML_model_training_script import train_ml_model
 from scripts.cleanig_data_script import debug_ligne, column_mapping, normalize_data, compute_statistics, \
     correlation_matrix, isolate_random_row, drop_column, normalize_humidity
-from scripts.visualisation_script import visualisation_V1_V2, visualisation_correlation_matrix
-from scripts.ML_model_training_script import train_ml_model
-# from scripts.prediction_script import perform_prediction  # Nouvelle fonction pour la prédiction
+from scripts.visualisation_script import visualisation_correlation_matrix
+from scripts.prediction_script import perform_prediction
 from colorama import Fore, Style
 
 def display_message(message):
@@ -65,7 +64,6 @@ important_features = [
     'catastrophe'
 ]
 
-# Options pour le choix de l'utilisateur
 def main():
     """
     Programme principal pour gérer le traitement des données et l'entraînement des modèles.
@@ -73,8 +71,9 @@ def main():
     display_message("Bienvenue dans le programme de traitement des données et d'entraînement de modèle")
     options = {
         "1": "Réduire les données",
-        '2': 'Séparer une ligne du dataset',
-        '3': "Entrainement d'un modèle ML"
+        "2": "Séparer une ligne du dataset",
+        "3": "Entrainement d'un modèle ML",
+        "4": "Prédiction avec un modèle ML"
     }
 
     # Afficher les options disponibles
@@ -103,22 +102,27 @@ def main():
         visualisation_correlation_matrix(clean_catastrophes_naturelles_data, visu_corr_after)
 
         compute_statistics(clean_catastrophes_naturelles_data, statistics_data)
-        compute_statistics(clean_catastrophes_naturelles_data_iot, statistics_data)
-        display_message(f"Réduction et nettoyage des données terminés avec succès, Deux datasets créé : {clean_catastrophes_naturelles_data_iot} et {clean_catastrophes_naturelles_data}")
+        compute_statistics(clean_catastrophes_naturelles_data_iot, statistics_data_iot)
+        display_message(f"Réduction et nettoyage des données terminés avec succès, deux datasets créés : {clean_catastrophes_naturelles_data_iot} et {clean_catastrophes_naturelles_data}")
 
-    # Étape 2 : Separation d'une ligne
+    # Étape 2 : Séparation d'une ligne
     if 2 in choice:
-        display_message("\nÉtape 2 : Separation d'une ligne aléatoire")
+        display_message("\nÉtape 2 : Séparation d'une ligne aléatoire")
         isolate_random_row(clean_catastrophes_naturelles_data, reformed_catastrophes_naturelles_data, random_row)
         isolate_random_row(clean_catastrophes_naturelles_data_iot, reformed_catastrophes_naturelles_data_iot, random_row_iot)
-        display_message(f"Séparation de la ligne terminés avec succès !")
+        display_message("Séparation de la ligne terminée avec succès !")
 
-    # Étape 3 : Entrainement d'un modèle ML
+    # Étape 3 : Entraînement d'un modèle ML
     if 3 in choice:
         display_message("\nÉtape 3 : Entrainement d'un modèle ML")
         train_ml_model(reformed_catastrophes_naturelles_data, output_roc_curve, output_learning_curve, output_matrice_conf, output_model_file=ml_model_file)
         train_ml_model(reformed_catastrophes_naturelles_data_iot, output_roc_curve_iot, output_learning_curve_iot, output_matrice_conf_iot, output_model_file=ml_model_file_iot)
-        display_message(f"Modèle DL sauvegardé sous : {ml_model_file}")
+        display_message(f"Modèles ML sauvegardés sous : {ml_model_file} et {ml_model_file_iot}")
+
+    # Étape 4 : Prédiction avec un modèle ML
+    if 4 in choice:
+        display_message("\nÉtape 4 : Prédiction avec un modèle ML")
+        perform_prediction(random_row, random_row_iot, ml_model_file, ml_model_file_iot)
 
 if __name__ == '__main__':
     main()
