@@ -1,8 +1,4 @@
-Voici un canevas pour le README de votre projet de hackathon "La Garonne déborde!" incluant les détails de votre équipe, les tâches effectuées, et les résultats visuels générés pendant le projet. 
-
----
-
-# README - Hackathon "La Garonne déborde !"
+# Hackathon "La Garonne déborde !"
 
 ## Contexte du projet
 
