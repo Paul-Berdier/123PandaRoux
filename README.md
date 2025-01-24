@@ -95,28 +95,40 @@ Le projet est structuré en plusieurs dossiers pour faciliter l'organisation et 
    - Placez le dataset `catastrophes_naturelles.csv` dans le dossier `data/` pour le traitement des données.
    - Le projet générera les autres fichiers et visualisations dans leurs dossiers respectifs.
 
-## Exécution du projet
+## Fichiers principaux
 
-1. **Cloner le projet :**
-   ```bash
-   git clone <repository_url>
-   cd 123PandaRoux
-   ```
+- **main.py** : Programme principal pour l’exécution des étapes du projet.
+- **script_hackathon.ipynb** : Jupyter Notebook contenant les étapes complètes du projet pour les utilisateurs préférant cette interface.
+- **scripts/** : Contient les différents modules Python pour le nettoyage des données, l’entraînement des modèles et les prédictions.
 
-2. **Installer les dépendances :**
+## Instructions pour exécuter le projet
+
+### Option 1 : Utilisation du code Python
+
+1. **Installation des dépendances** :
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Lancer le programme :**
+2. **Organisation des dossiers** :
+   - Placez vos données dans le dossier `data`.
+   - Créez les dossiers `docs` et `models` si ce n’est pas déjà fait.
+
+3. **Exécution du script principal** :
    ```bash
    python main.py
    ```
 
-4. **Naviguer parmi les options du programme**  
-   Choisissez une ou plusieurs étapes à exécuter (exemple : `1,2,3`), ou appuyez sur Entrée pour tout exécuter.
+4. **Instructions dans le terminal** :
+   Suivez les instructions dans le terminal pour choisir les étapes à exécuter.
 
-5. **Utiliser Power BI pour visualiser les données** :
-   - Importez les visualisations et les prédictions dans Power BI.
-   - Chargez les fichiers CSV nettoyés et les résultats prédits pour créer un tableau de bord dynamique.
+### Option 2 : Utilisation du Notebook Jupyter
+
+1. **Lancez le fichier** `script_hackathon.ipynb` dans Jupyter Notebook.
+2. **Exécutez chaque cellule** dans l’ordre pour reproduire les étapes du projet.
+
+### Option 3 : Visualisation avec Power BI
+
+1. **Ouvrez le fichier Power BI** présentant les graphiques interactifs.
+2. **Connectez-le aux données** du dossier `data` pour visualiser les éléments interactifs (historique et prédictions).
 
