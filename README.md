@@ -10,3 +10,5 @@ IOT team give every day a CSV with all data collected during the day
 
 Mapping for "catastrophe" :
         0 - aucun | 1 - seisme | 2 - innondation | 3 - both
+
+Power BI : To change the csv data first go in the Power Query (Transformer les données) and edit the data source (Parametre de la source de donnees)
