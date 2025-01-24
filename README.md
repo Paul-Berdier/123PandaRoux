@@ -1,3 +1,7 @@
+Voici la version mise à jour du README avec les instructions concernant la création des dossiers nécessaires et le placement des datasets :
+
+---
+
 # Hackathon "La Garonne déborde !"
 
 ## Contexte du projet
@@ -79,35 +83,15 @@ Ces colonnes ont été choisies pour leur pertinence dans la prédiction des cat
 
 Le projet est structuré en plusieurs dossiers pour faciliter l'organisation et la gestion des différentes étapes :
 
-- **data/** : Contient les fichiers de données en entrée et sortie, comme les datasets nettoyés, les lignes isolées, et les statistiques.
-- **models/** : Contient les modèles de machine learning entraînés.
-- **docs/** : Contient les visualisations générées, telles que les courbes ROC, les matrices de confusion et les courbes d'apprentissage.
-- **scripts/** : Regroupe les scripts Python pour chaque étape du projet :
-  - `cleanig_data_script.py` : Pour nettoyer et préparer les données.
-  - `ML_model_training_script.py` : Pour entraîner les modèles de machine learning.
-  - `prediction_script.py` : Pour effectuer les prédictions avec les modèles.
-  - `visualisation_script.py` : Pour générer des visualisations.
-- **main.py** : Script principal pour exécuter les étapes du projet.
+1. **Création des dossiers nécessaires** :
+   - Créez les dossiers suivants à la racine du projet :
+     - `data/` : Ce dossier contiendra les fichiers de données en entrée et sortie, comme les datasets nettoyés, les lignes isolées, et les statistiques.
+     - `models/` : Ce dossier contiendra les modèles de machine learning entraînés.
+     - `docs/` : Ce dossier contiendra les visualisations générées, telles que les courbes ROC, les matrices de confusion et les courbes d'apprentissage.
 
-## Fonctionnalités principales
-
-1. **Nettoyage des données**  
-   - Mapping des colonnes catégoriques (`catastrophe`, `quartier`) avec des valeurs numériques.  
-   - Normalisation de l'humidité et gestion des valeurs manquantes.  
-   - Création d'un dataset dédié au modèle IoT avec des colonnes spécifiques.
-
-2. **Visualisations**  
-   - Matrices de corrélation avant et après nettoyage.  
-   - Courbes d'apprentissage des modèles pour analyser leur performance.  
-   - Matrices de confusion pour évaluer la précision des prédictions.  
-   - Courbes ROC pour analyser les compromis entre sensibilité et spécificité.
-
-3. **Entraînement des modèles**  
-   - Modèle standard : Basé sur le dataset complet.  
-   - Modèle IoT : Conçu avec un sous-ensemble de colonnes pour refléter les données des capteurs.  
-
-4. **Prédiction**  
-   - Utilisation de modèles entraînés pour prédire les catastrophes naturelles à partir de données nouvelles ou isolées.  
+2. **Placement des datasets** :
+   - Placez le dataset `catastrophes_naturelles.csv` dans le dossier `data/` pour le traitement des données.
+   - Le projet générera les autres fichiers et visualisations dans leurs dossiers respectifs.
 
 ## Exécution du projet
 
