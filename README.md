@@ -109,3 +109,7 @@ Le projet est structuré en plusieurs dossiers pour faciliter l'organisation et 
 
 4. **Naviguer parmi les options du programme**  
    Choisissez une ou plusieurs étapes à exécuter (exemple : `1,2,3`), ou appuyez sur Entrée pour tout exécuter.
+
+   **Visualisation du projet :**
+   Pour mettre à jour les données PowerBI cliquer sur 'Transformer les données', puis sur 'Paramètres de la source de données' et ensuite selectionner les nouveaux emplacements pour les CSV catastrophes_naturelles_prediction et catastrophes_naturelles_transformes.
+   Tout changement de données des CSV sera impacter sur PowerBI apres une Actualisation ('Actualiser' dans l'onglet modele).
