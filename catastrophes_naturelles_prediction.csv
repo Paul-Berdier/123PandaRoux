@@ -1,6 +1,0 @@
-ID,temperature,humidite,force_moyenne_du_vecteur_de_vent,force_du_vecteur_de_vent_max,pluie_intensite_max,date,quartier,sismicite,concentration_gaz,pluie_totale,catastrophe
-0,5.7,75.6,3.8,4.3,0,01/01/2170,1,0.62,231.56,182.37,2
-1,5.7,75.6,3.8,4.3,0,01/01/2170,3,0.94,248.2,903.2,3
-2,5.7,75.6,3.8,4.3,0,01/01/2170,4,0.95,240.55,363.06,0
-3,5.7,75.6,3.8,4.3,0,01/01/2170,2,0.39,159.1,473.93,1
-4,5.7,75.6,3.8,4.3,0,01/01/2170,5,0.41,143.29,475.72,0
