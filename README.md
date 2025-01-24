@@ -65,4 +65,67 @@ Ces colonnes ont été choisies pour leur pertinence dans la prédiction des cat
 
 ---
 
-N'hésitez pas à adapter ce canevas en fonction des détails spécifiques ou des modifications que vous souhaiteriez apporter au projet.
+## Technologies et outils utilisés
+
+- **Python** : Langage principal pour le traitement des données, la création des modèles et la visualisation.
+- **Pandas** : Gestion et manipulation des données tabulaires.
+- **XGBoost** : Algorithme de machine learning utilisé pour la création des modèles prédictifs.
+- **Joblib** : Sauvegarde et chargement des modèles ML.
+- **Matplotlib** : Création de visualisations graphiques.
+- **Colorama** : Mise en forme des messages affichés dans le terminal.
+- **Git** : Collaboration et gestion des versions du projet.
+
+## Organisation des fichiers
+
+Le projet est structuré en plusieurs dossiers pour faciliter l'organisation et la gestion des différentes étapes :
+
+- **data/** : Contient les fichiers de données en entrée et sortie, comme les datasets nettoyés, les lignes isolées, et les statistiques.
+- **models/** : Contient les modèles de machine learning entraînés.
+- **docs/** : Contient les visualisations générées, telles que les courbes ROC, les matrices de confusion et les courbes d'apprentissage.
+- **scripts/** : Regroupe les scripts Python pour chaque étape du projet :
+  - `cleanig_data_script.py` : Pour nettoyer et préparer les données.
+  - `ML_model_training_script.py` : Pour entraîner les modèles de machine learning.
+  - `prediction_script.py` : Pour effectuer les prédictions avec les modèles.
+  - `visualisation_script.py` : Pour générer des visualisations.
+- **main.py** : Script principal pour exécuter les étapes du projet.
+
+## Fonctionnalités principales
+
+1. **Nettoyage des données**  
+   - Mapping des colonnes catégoriques (`catastrophe`, `quartier`) avec des valeurs numériques.  
+   - Normalisation de l'humidité et gestion des valeurs manquantes.  
+   - Création d'un dataset dédié au modèle IoT avec des colonnes spécifiques.
+
+2. **Visualisations**  
+   - Matrices de corrélation avant et après nettoyage.  
+   - Courbes d'apprentissage des modèles pour analyser leur performance.  
+   - Matrices de confusion pour évaluer la précision des prédictions.  
+   - Courbes ROC pour analyser les compromis entre sensibilité et spécificité.
+
+3. **Entraînement des modèles**  
+   - Modèle standard : Basé sur le dataset complet.  
+   - Modèle IoT : Conçu avec un sous-ensemble de colonnes pour refléter les données des capteurs.  
+
+4. **Prédiction**  
+   - Utilisation de modèles entraînés pour prédire les catastrophes naturelles à partir de données nouvelles ou isolées.  
+
+## Exécution du projet
+
+1. **Cloner le projet :**
+   ```bash
+   git clone <repository_url>
+   cd 123PandaRoux
+   ```
+
+2. **Installer les dépendances :**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Lancer le programme :**
+   ```bash
+   python main.py
+   ```
+
+4. **Naviguer parmi les options du programme**  
+   Choisissez une ou plusieurs étapes à exécuter (exemple : `1,2,3`), ou appuyez sur Entrée pour tout exécuter.

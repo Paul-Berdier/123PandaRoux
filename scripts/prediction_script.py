@@ -52,21 +52,15 @@ def perform_prediction(random_row, random_row_iot, ml_model_file, ml_model_file_
     # Pré-traiter la ligne isolée (random_row_iot)
     random_row_iot = preprocess_data(random_row_iot)
 
-    # Préparer la donnée sous forme d'un DMatrix XGBoost
-    X_isolated = xgb.DMatrix(random_row)
-
-    # Préparer la donnée sous forme d'un DMatrix XGBoost
-    X_isolated_iot = xgb.DMatrix(random_row_iot)
-
     # Prédiction avec le modèle de base
-    base_ml_prediction = base_ml_model.predict(X_isolated)[0]
+    base_ml_prediction = base_ml_model.predict(random_row)[0]
     print(f"Prédiction avec le modèle ML de base : {base_ml_prediction}")
 
     # Charger et pré-traiter les données IoT
     iot_model = joblib.load(ml_model_file_iot)
 
     # Prédiction avec le modèle IoT
-    iot_ml_prediction = iot_model.predict(X_isolated_iot)[0]
+    iot_ml_prediction = iot_model.predict(random_row_iot)[0]
     print(f"Prédiction avec le modèle IoT : {iot_ml_prediction}")
 
     return base_ml_prediction, iot_ml_prediction
