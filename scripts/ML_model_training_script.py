@@ -1,22 +1,31 @@
+import optuna
 import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, VotingClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
+from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    ConfusionMatrixDisplay,
+    roc_curve,
+    roc_auc_score
+)
+from sklearn.preprocessing import label_binarize
 from scripts.visualisation_script import plot_learning_curve
-import matplotlib.pyplot as plt
+import xgboost as xgb
 import joblib
 
-# Fonction pour entraîner un modèle de Machine Learning avancé
-def train_ml_model(prepared_data_file, output_roc_curve, output_learning_curve, target_column='catastrophe', output_model_file='model_ML.joblib'):
+
+def train_ml_model(prepared_data_file, output_roc_curve, output_learning_curve, output_matrice_conf,
+                   target_column='catastrophe', output_model_file='best_model_ML.joblib'):
     """
-    Train a Machine Learning model with multiple techniques and evaluate its performance.
+    Train a Machine Learning model with XGBoost and evaluate its performance.
 
     Parameters:
         prepared_data_file (str): Path to the prepared dataset.
         output_roc_curve (str): Path to save the ROC curve plot.
         output_learning_curve (str): Path to save the learning curve plot.
+        output_matrice_conf (str): Path to save the confusion matrix plot.
         target_column (str): Name of the target column.
         output_model_file (str): Path to save the trained model.
 
@@ -26,109 +35,97 @@ def train_ml_model(prepared_data_file, output_roc_curve, output_learning_curve, 
     print("Chargement des données...")
     data = pd.read_csv(prepared_data_file)
 
-    # Vérification des colonnes non numériques
-    print("Traitement des colonnes non numériques...")
-    if 'date' in data.columns:
-        # Transformer la colonne 'date' en un format numérique (année par exemple)
-        print("Transformation de la colonne 'date' en année...")
-        data['date'] = pd.to_datetime(data['date']).dt.year  # Utiliser uniquement l'année
-
-    # Séparer les caractéristiques (X) et la cible (y)
-    print("Séparation des caractéristiques (X) et de la cible (y)...")
-    X = data.drop(columns=[target_column])
+    # Séparation des caractéristiques et de la cible
+    X = data.drop(columns=[target_column, 'date'])
     y = data[target_column]
 
-    # Filtrer uniquement les colonnes numériques
-    print("Filtrage des colonnes numériques...")
-    X = X.select_dtypes(include=[np.number])
-
-    # Vérification des données après filtrage
-    print(f"Colonnes utilisées pour le modèle : {X.columns.tolist()}")
-
-    # Diviser les données en ensembles d'entraînement et de test
+    # Division des données en ensembles d'entraînement et de test
     print("Division des données en ensembles d'entraînement et de test...")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Initialisation des modèles
-    models = {
-        "Random Forest": RandomForestClassifier(random_state=42),
-        "Gradient Boosting": GradientBoostingClassifier(random_state=42),
-        "Logistic Regression": LogisticRegression(max_iter=1000, random_state=42)
-    }
-
-    # Optimisation des hyperparamètres
-    param_grids = {
-        "Random Forest": {
-            "n_estimators": [200, 300, 400],
-            "max_depth": [8, 10, 12],
-            "min_samples_split": [2, 5, 10]
-        },
-        "Gradient Boosting": {
-            "learning_rate": [0.01, 0.05, 0.1],
-            "n_estimators": [200, 300, 500],
-            "max_depth": [2, 3, 5]
-        },
-        "Logistic Regression": {
-            "C": [0.01,0.1, 1, 10],
-            'solver': ['liblinear', 'lbfgs']
+    # Fonction d'optimisation avec Optuna pour XGBoost
+    def objective(trial):
+        params = {
+            'n_estimators': trial.suggest_int('n_estimators', 50, 200),
+            'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.2),
+            'max_depth': trial.suggest_int('max_depth', 3, 10),
+            'subsample': trial.suggest_float('subsample', 0.6, 1.0),
+            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.6, 1.0),
+            'gamma': trial.suggest_float('gamma', 0, 10),
+            'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
+            'reg_alpha': trial.suggest_float('reg_alpha', 0, 1),
+            'reg_lambda': trial.suggest_float('reg_lambda', 0, 1),
+            'random_state': 42
         }
-    }
 
-    best_estimators = {}
+        model = xgb.XGBClassifier(**params)
+        model.fit(X_train, y_train)
 
-    for model_name, model in models.items():
-        print(f"Optimisation des hyperparamètres pour {model_name}...")
-        grid_search = GridSearchCV(model, param_grids[model_name], scoring="accuracy", cv=3)
-        grid_search.fit(X_train, y_train)
-        best_estimators[model_name] = grid_search.best_estimator_
-        print(f"Meilleurs paramètres pour {model_name}: {grid_search.best_params_}")
+        y_pred = model.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
 
-    # Entraînement d'un modèle ensembliste (VotingClassifier)
-    print("Entraînement du modèle VotingClassifier...")
-    voting_model = VotingClassifier(
-        estimators=[(name, estimator) for name, estimator in best_estimators.items()],
-        voting='soft'
-    )
-    voting_model.fit(X_train, y_train)
+        return accuracy
 
-    # Évaluation du modèle
+    # Optimisation avec Optuna
+    study = optuna.create_study(direction='maximize')
+    study.optimize(objective, n_trials=100)
+
+    print("Meilleur essai: score {},\nparamètres {}".format(study.best_trial.value, study.best_trial.params))
+
+    best_params = study.best_trial.params
+    best_xgb_model = xgb.XGBClassifier(**best_params, random_state=42)
+
+    # Entraînement du modèle avec les meilleurs paramètres
+    print("Entraînement du modèle XGBoost avec les meilleurs paramètres...")
+    best_xgb_model.fit(X_train, y_train)
+
+    # Prédictions et évaluation
     print("Évaluation des performances...")
-    y_pred = voting_model.predict(X_test)
-    y_pred_proba = voting_model.predict_proba(X_test)[:, 1]
-
-    # Rapport de classification
-    print("\nRapport de classification :")
+    y_pred = best_xgb_model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy}")
     print(classification_report(y_test, y_pred))
 
     # Matrice de confusion
+    cm = confusion_matrix(y_test, y_pred)
     print("\nMatrice de confusion :")
-    print(confusion_matrix(y_test, y_pred))
+    print(cm)
 
-    # AUC-ROC
-    print("Calcul de l'AUC-ROC...")
-    try:
-        auc_score = roc_auc_score(y_test, voting_model.predict_proba(X_test), multi_class='ovr')
-        print(f"AUC-ROC: {auc_score:.4f}")
+    disp = ConfusionMatrixDisplay(cm, display_labels=best_xgb_model.classes_)
+    disp.plot()
+    plt.title('Matrice de confusion')
+    plt.savefig(output_matrice_conf)
+    plt.show()
 
-        # Courbe ROC pour le multi-classes (si applicable)
-        fpr, tpr, _ = roc_curve(y_test, y_pred_proba, pos_label=1)  # Pour une classe spécifique
-        plt.figure()
-        plt.plot(fpr, tpr, label=f"VotingClassifier (AUC = {auc_score:.2f})")
-        plt.plot([0, 1], [0, 1], 'k--', label="Random Guess")
-        plt.xlabel("False Positive Rate")
-        plt.ylabel("True Positive Rate")
-        plt.title("ROC Curve")
-        plt.legend()
-        plt.grid()
-        plt.savefig(output_roc_curve)
-        plt.close()
-    except ValueError as e:
-        print(f"Erreur lors du calcul de l'AUC-ROC : {e}")
-
-    # Sauvegarder le modèle
-    joblib.dump(voting_model, output_model_file)
+    # Sauvegarde du modèle
+    joblib.dump(best_xgb_model, output_model_file)
     print(f"Modèle sauvegardé sous : {output_model_file}")
+
+    # Calcul des courbes ROC pour chaque classe
+    print("Calcul des courbes ROC pour chaque classe...")
+    y_test_bin = label_binarize(y_test, classes=best_xgb_model.classes_)
+    y_pred_proba = best_xgb_model.predict_proba(X_test)
+
+    plt.figure()
+    for i, class_label in enumerate(best_xgb_model.classes_):
+        fpr, tpr, _ = roc_curve(y_test_bin[:, i], y_pred_proba[:, i])
+        auc_score = roc_auc_score(y_test_bin[:, i], y_pred_proba[:, i])
+        plt.plot(fpr, tpr, label=f"Classe {class_label} (AUC={auc_score:.2f})")
+
+    # Moyenne micro
+    fpr_micro, tpr_micro, _ = roc_curve(y_test_bin.ravel(), y_pred_proba.ravel())
+    auc_micro = roc_auc_score(y_test_bin, y_pred_proba, average='micro')
+    plt.plot(fpr_micro, tpr_micro, linestyle='--', label=f"Micro-average (AUC={auc_micro:.2f})")
+
+    plt.plot([0, 1], [0, 1], 'k--', label="Random Guess")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve (One-vs-Rest)")
+    plt.legend()
+    plt.grid()
+    plt.savefig(output_roc_curve)
+    plt.close()
 
     # Courbe d'apprentissage
     print("Génération des courbes d'apprentissage...")
-    plot_learning_curve(voting_model, X_train, y_train, "Courbe d'apprentissage", output_learning_curve)
+    plot_learning_curve(best_xgb_model, X_train, y_train, "Courbe d'apprentissage", output_learning_curve)
