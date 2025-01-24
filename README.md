@@ -51,6 +51,12 @@ Notre équipe est composée de 7 étudiants en Master Data Science sous le nom d
    - Modèle IoT  
      ![Courbe ROC IoT](docs/output_roc_curve_iot.png)
 
+5. **Prédiction du jour**  
+   ![Carte des prédictions](docs/prediction_map.png)
+
+6. **Historique des catastrophes**  
+   ![Historique des catastrophes](docs/historique_catastrophes.png)
+
 ## Colonnes utilisées pour le modèle IoT
 
 Pour le modèle IoT, les données suivantes ont été sélectionnées et conservées :
@@ -72,7 +78,7 @@ Ces colonnes ont été choisies pour leur pertinence dans la prédiction des cat
 - **XGBoost** : Algorithme de machine learning utilisé pour la création des modèles prédictifs.
 - **Joblib** : Sauvegarde et chargement des modèles ML.
 - **Matplotlib** : Création de visualisations graphiques.
-- **Colorama** : Mise en forme des messages affichés dans le terminal.
+- **Power BI** : Création de tableaux de bord interactifs pour visualiser les prédictions et l’historique des catastrophes.
 - **Git** : Collaboration et gestion des versions du projet.
 
 ## Organisation des fichiers
@@ -109,3 +115,8 @@ Le projet est structuré en plusieurs dossiers pour faciliter l'organisation et 
 
 4. **Naviguer parmi les options du programme**  
    Choisissez une ou plusieurs étapes à exécuter (exemple : `1,2,3`), ou appuyez sur Entrée pour tout exécuter.
+
+5. **Utiliser Power BI pour visualiser les données** :
+   - Importez les visualisations et les prédictions dans Power BI.
+   - Chargez les fichiers CSV nettoyés et les résultats prédits pour créer un tableau de bord dynamique.
+
