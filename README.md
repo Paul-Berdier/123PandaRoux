@@ -1,7 +1,3 @@
-Voici la version mise à jour du README avec les instructions concernant la création des dossiers nécessaires et le placement des datasets :
-
----
-
 # Hackathon "La Garonne déborde !"
 
 ## Contexte du projet
